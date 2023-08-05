@@ -4,14 +4,37 @@ const Theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#44B5E8',
+            main: '#0cad77',
         },
         background: {
             default: '#000',
             paper: 'rgb(33, 37, 41)',
         },
+        text: {
+            tertiary: 'rgb(151 151 151 / 90%)',
+        },
+        custom: {
+            background: 'rgb(45 51 57)',
+            borderColor: 'rgba(255, 255, 255, 0.07)',
+        },
     },
     components: {
+        MuiIconButton: {
+            variants: [
+                {
+                    props: { disableRipple: true, variant: 'navIcon' },
+                    style: ({ theme }) => ({
+                        marginRight: theme.spacing(2),
+                        padding: '12px',
+                        borderRadius: '8px',
+                        backgroundColor: theme.palette.custom.background,
+                        '&:hover': {
+                            backgroundColor: theme.palette.custom.background,
+                        },
+                    }),
+                },
+            ],
+        },
         MuiDivider: {
             styleOverrides: {
                 light: {
@@ -25,7 +48,7 @@ const Theme = createTheme({
                 {
                     props: { variant: 'sidebarButton' },
                     style: ({ theme }) => ({
-                        padding: '2px 10px',
+                        padding: '5px 15px',
                         cursor: 'pointer',
                         color: theme.palette.text.secondary,
                         '&:hover': {

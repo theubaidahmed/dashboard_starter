@@ -14,16 +14,21 @@ const Search = () => {
                 px: '3px',
                 display: 'flex',
                 alignItems: 'center',
-                bgcolor: 'custom.search.main',
-                border: 'custom.border',
-                minHeight: '45px',
+                bgcolor: 'custom.background',
+                border: 'none',
+                minHeight: '44px',
+                borderRadius: '5px',
+                px: 1,
             }}>
             <InputBase
                 sx={{
                     ml: 1,
                     flex: 1,
+                    'input::placeholder': {
+                        fontSize: '13px',
+                    },
                 }}
-                placeholder='Search here'
+                placeholder='Search...'
                 inputProps={{
                     'aria-label': 'search google maps',
                 }}

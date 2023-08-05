@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 //mui component
 import {
@@ -17,45 +17,88 @@ import {
     Toolbar,
     Typography,
     ListItemButton,
+    styled,
+    Badge,
+    useTheme,
 } from '@mui/material';
 
 //mui icons
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import StorageIcon from '@mui/icons-material/Storage';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
 //services
-import NavLinks from '@/services/links';
+import NavLinks from '@/services/navLinks';
 import Search from './Search';
 import Image from './Image';
 import { useRouter } from 'next/router';
 import NavLink from './NavLink';
 
-const drawerWidth = 280;
+const drawerWidth = 270;
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+        backgroundColor: '#0dcd94',
+        color: '#0dcd94',
+        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+        '&::after': {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            animation: 'ripple 1.2s infinite ease-in-out',
+            border: '1px solid currentColor',
+            content: '""',
+        },
+    },
+    '@keyframes ripple': {
+        '0%': {
+            transform: 'scale(.8)',
+            opacity: 1,
+        },
+        '100%': {
+            transform: 'scale(2.4)',
+            opacity: 0,
+        },
+    },
+}));
 
 export default function Navbar(props) {
     const { children } = props;
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const theme = useTheme();
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    console.log(theme);
+    console.log(theme.breakpoints.up(900));
     // const { showSuccess, showError } = useMessage();
-    const location = useRouter();
 
     const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
+        setDrawerOpen(!drawerOpen);
     };
 
-    const page = NavLinks.find(link => location.pathname === link.to) || {
-        name: 'Overview Storage',
-        to: '/',
-    };
+    useEffect(() => {
+        window.addEventListener('resize', e => {
+            const innerWidth = e.target.innerWidth;
+            if (!drawerOpen && innerWidth > 900) setDrawerOpen(true);
+            else if (drawerOpen && innerWidth < 900) setDrawerOpen(false);
+        });
+    }, [drawerOpen]);
 
     const drawer = (
         <Box
             bgcolor='background.paper'
             minHeight='100vh'
             color='text.secondary'
-            sx={{ borderRight: '1px solid custom.border' }}>
+            sx={{
+                borderRight: '1px solid',
+                borderColor: 'custom.borderColor',
+                boxShadow: '0px 6px 18px #0e0f2e',
+            }}>
             <Box
                 display='flex'
                 alignItems='center'
@@ -64,43 +107,55 @@ export default function Navbar(props) {
                 minHeight={'85px'}
                 // href='/'
                 sx={{ textDecoration: 'none', color: 'text.primary' }}>
-                {/* <Image src='files/logo/files-text.png' sx={{ height: '40px' }} /> */}
-                {/* <Typography variant='h6' letterSpacing={1} ml={2}>
-                    Clikkle Files
-                </Typography> */}
+                <Image name='greenIcon.png' width='73' height='75' />
+                <Typography variant='h6' letterSpacing={1}>
+                    Workspace
+                </Typography>
             </Box>
             <Divider />
-            {/* <Typography variant='body2' pl={3} mt={1.5} fontSize='14px' fontWeight={500}>
-                Overview
-            </Typography> */}
-            <List sx={{ px: 3, py: 1.8 }}>
-                <NavLink href='/' style={{ textDecoration: 'none' }}>
-                    {({ isActive }) => (
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                selected={isActive}
-                                disableRipple
-                                disableTouchRipple
-                                variant='sidebarButton'>
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: '35px',
-                                        color: 'text.secondary',
-                                    }}>
-                                    <StorageIcon fontSize='small' />
-                                </ListItemIcon>
-                                <ListItemText primary='Overview Storage' />
-                            </ListItemButton>
-                        </ListItem>
-                    )}
-                </NavLink>
-            </List>
+            <Stack direction='column' alignItems='center' my={3}>
+                <Box
+                    sx={{
+                        padding: '4px',
+                        bgcolor: 'custom.background',
+                        borderRadius: '100%',
+                        mb: 1.5,
+                        transition: 'all 250ms ease-out',
+                        '&:hover': {
+                            transform: 'scale(1.1)',
+                        },
+                    }}>
+                    <StyledBadge
+                        overlap='circular'
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant='dot'>
+                        <Avatar
+                            alt='Remy Sharp'
+                            src='https://shorturl.at/fjqz9'
+                            sx={{
+                                width: 80,
+                                height: 80,
+                            }}
+                        />
+                    </StyledBadge>
+                </Box>
+                <Typography variant='h6' color='text.primary'>
+                    Mohd Ubaid
+                </Typography>
+                <Typography variant='body2'>Web Developer</Typography>
+            </Stack>
 
             <Divider />
-            <Typography variant='body2' pl={3} mt={1.5} fontSize='14px' fontWeight={500}>
-                File Manager
+            <Typography
+                variant='body2'
+                pl={3}
+                mt={2}
+                fontSize='11px'
+                fontWeight={500}
+                color='text.tertiary'>
+                DASHBOARDS
             </Typography>
-            <List sx={{ px: 3 }}>
+            <List sx={{ p: '10px' }}>
                 {NavLinks.map(link => (
                     <NavLink
                         href={link.to}
@@ -137,12 +192,12 @@ export default function Navbar(props) {
                 component={Box}
                 position='fixed'
                 sx={{
-                    width: { md: `calc(100% - ${drawerWidth}px)` },
-                    ml: { md: `${drawerWidth}px` },
+                    width: { md: drawerOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
+                    ml: { md: drawerOpen ? `${drawerWidth}px` : 0 },
                     backgroundColor: 'background.paper',
-
-                    borderBottom: '1px solid custom.border',
-                    borderBottomColor: 'custom.border',
+                    transition: 'all 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
+                    borderBottom: '1px solid',
+                    borderBottomColor: 'custom.borderColor',
                     color: 'text.primary',
                 }}>
                 <Toolbar
@@ -157,44 +212,48 @@ export default function Navbar(props) {
                         <Grid item>
                             <IconButton
                                 edge='start'
+                                disableRipple
                                 onClick={handleDrawerToggle}
-                                sx={{ mr: 2, display: { md: 'none' } }}>
-                                <MenuIcon />
+                                variant='navIcon'>
+                                <MenuIcon sx={{ fontSize: 20 }} />
                             </IconButton>
-                        </Grid>
-                        <Grid item xs>
-                            <Typography>{page?.name}</Typography>
                         </Grid>
                         <Grid
                             item
-                            xs={5}
+                            xs={3}
                             alignItems={{ xs: 'center', md: 'start' }}
                             display={{ xs: 'none', md: 'block' }}>
                             <Search />
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs>
                             <Stack
                                 direction='row'
                                 alignItems='center'
                                 justifyContent='flex-end'
-                                spacing={4}>
-                                <Box display={{ xs: 'block', md: 'none' }} pt={1} mx={1}>
-                                    <SearchIcon />
-                                </Box>
-
-                                <Box display={{ xs: 'none', sm: 'block' }}>
-                                    <IconButton sx={{ mx: 0.5 }}>
-                                        <NotificationsNoneOutlinedIcon fontSize='small' />
+                                spacing={2}>
+                                <Box display={{ xs: 'block', md: 'none' }}>
+                                    <IconButton disableRipple variant='navIcon' sx={{ mr: 0 }}>
+                                        <SearchIcon />
                                     </IconButton>
                                 </Box>
 
-                                <IconButton ml={0}>
-                                    <Avatar
-                                        alt='Remy Sharp'
-                                        src='https://shorturl.at/fjqz9'
-                                        sx={{ width: 30, height: 30 }}
-                                    />
-                                </IconButton>
+                                <Box display={{ xs: 'none', md: 'block' }}>
+                                    <IconButton disableRipple variant='navIcon'>
+                                        <WbSunnyOutlinedIcon sx={{ fontSize: 20 }} />
+                                    </IconButton>
+                                    <IconButton disableRipple variant='navIcon'>
+                                        <EmailOutlinedIcon sx={{ fontSize: 20 }} />
+                                    </IconButton>
+                                    <IconButton disableRipple variant='navIcon' sx={{ mr: 0 }}>
+                                        <NotificationsNoneOutlinedIcon sx={{ fontSize: 20 }} />
+                                    </IconButton>
+                                </Box>
+
+                                <Avatar
+                                    alt='Remy Sharp'
+                                    src='https://shorturl.at/fjqz9'
+                                    sx={{ width: 42, height: 42, borderRadius: '8px' }}
+                                />
                             </Stack>
                         </Grid>
                     </Grid>
@@ -203,21 +262,20 @@ export default function Navbar(props) {
             <Box
                 component='nav'
                 sx={{
-                    width: { md: drawerWidth },
-                    flexShrink: { sm: 0 },
+                    width: drawerWidth,
+                    flexShrink: { md: 0 },
                     backgroundColor: 'background.paper',
                 }}
                 aria-label='mailbox folders'>
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    variant='temporary'
-                    open={mobileOpen}
+                    variant='persistent'
+                    open={drawerOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
                         keepMounted: true, // Better open performance on mobile.
                     }}
                     sx={{
-                        display: { xs: 'block', md: 'none' },
                         '& .MuiDrawer-paper': {
                             boxSizing: 'border-box',
                             width: drawerWidth,
@@ -226,28 +284,16 @@ export default function Navbar(props) {
                     }}>
                     {drawer}
                 </Drawer>
-                <Drawer
-                    variant='permanent'
-                    sx={{
-                        display: { xs: 'none', md: 'block' },
-                        '& .MuiDrawer-paper': {
-                            boxSizing: 'border-box',
-                            width: drawerWidth,
-                            backgroundColor: 'background.default',
-                        },
-                    }}
-                    open>
-                    {drawer}
-                </Drawer>
             </Box>
             <Box
                 component='main'
                 sx={{
-                    width: { md: `calc(100% - ${drawerWidth}px)` },
-                    ml: { md: `${drawerWidth}px` },
+                    width: { md: drawerOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
+                    ml: { md: drawerOpen ? `${drawerWidth}px` : 0 },
                     minHeight: 'calc(100vh - 115px)',
+                    transition: 'all 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
                     backgroundColor: 'background.default',
-                    mt: { xs: 7, sm: '115px' },
+                    mt: { xs: 7, md: '115px' },
                 }}>
                 {children}
             </Box>
