@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 //mui component
 import {
@@ -37,6 +37,7 @@ import Search from './Search';
 import Image from './Image';
 import { useRouter } from 'next/router';
 import NavLink from './NavLink';
+import useMedia from '@/hooks/useMedia';
 
 const drawerWidth = 270;
 
@@ -73,32 +74,20 @@ export default function Navbar(props) {
     const { children } = props;
     const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
-    console.log(theme);
-    console.log(theme.breakpoints.up(900));
+    const drawerOpenMedia = useMedia('900');
+
+    useMemo(
+        () => (drawerOpenMedia ? setDrawerOpen(true) : setDrawerOpen(false)),
+        [drawerOpenMedia]
+    );
     // const { showSuccess, showError } = useMessage();
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
     };
 
-    useEffect(() => {
-        window.addEventListener('resize', e => {
-            const innerWidth = e.target.innerWidth;
-            if (!drawerOpen && innerWidth > 900) setDrawerOpen(true);
-            else if (drawerOpen && innerWidth < 900) setDrawerOpen(false);
-        });
-    }, [drawerOpen]);
-
     const drawer = (
-        <Box
-            bgcolor='background.paper'
-            minHeight='100vh'
-            color='text.secondary'
-            sx={{
-                borderRight: '1px solid',
-                borderColor: 'custom.borderColor',
-                boxShadow: '0px 6px 18px #0e0f2e',
-            }}>
+        <Box color='text.secondary'>
             <Box
                 display='flex'
                 alignItems='center'
@@ -156,7 +145,79 @@ export default function Navbar(props) {
                 DASHBOARDS
             </Typography>
             <List sx={{ p: '10px' }}>
-                {NavLinks.map(link => (
+                {NavLinks.dashboard.map(link => (
+                    <NavLink
+                        href={link.to}
+                        key={link.name}
+                        style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {isActive => (
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    selected={isActive}
+                                    disableRipple
+                                    disableTouchRipple
+                                    variant='sidebarButton'>
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: '35px',
+                                            color: 'text.secondary',
+                                        }}>
+                                        {link.icon}
+                                    </ListItemIcon>
+                                    <ListItemText primary={link.name} />
+                                </ListItemButton>
+                            </ListItem>
+                        )}
+                    </NavLink>
+                ))}
+            </List>
+            <Typography
+                variant='body2'
+                pl={3}
+                mt={2}
+                fontSize='11px'
+                fontWeight={500}
+                color='text.tertiary'>
+                APPS
+            </Typography>
+            <List sx={{ p: '10px' }}>
+                {NavLinks.apps.map(link => (
+                    <NavLink
+                        href={link.to}
+                        key={link.name}
+                        style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {isActive => (
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    selected={isActive}
+                                    disableRipple
+                                    disableTouchRipple
+                                    variant='sidebarButton'>
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: '35px',
+                                            color: 'text.secondary',
+                                        }}>
+                                        {link.icon}
+                                    </ListItemIcon>
+                                    <ListItemText primary={link.name} />
+                                </ListItemButton>
+                            </ListItem>
+                        )}
+                    </NavLink>
+                ))}
+            </List>
+            <Typography
+                variant='body2'
+                pl={3}
+                mt={2}
+                fontSize='11px'
+                fontWeight={500}
+                color='text.tertiary'>
+                PAGES
+            </Typography>
+            <List sx={{ p: '10px' }}>
+                {NavLinks.apps.map(link => (
                     <NavLink
                         href={link.to}
                         key={link.name}
@@ -205,13 +266,13 @@ export default function Navbar(props) {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         '&': {
+                            px: 2,
                             minHeight: '85px',
                         },
                     }}>
                     <Grid container alignItems='center'>
                         <Grid item>
                             <IconButton
-                                edge='start'
                                 disableRipple
                                 onClick={handleDrawerToggle}
                                 variant='navIcon'>
@@ -269,7 +330,7 @@ export default function Navbar(props) {
                 aria-label='mailbox folders'>
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    variant='persistent'
+                    variant={drawerOpenMedia ? 'persistent' : 'temporary'}
                     open={drawerOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
@@ -277,9 +338,23 @@ export default function Navbar(props) {
                     }}
                     sx={{
                         '& .MuiDrawer-paper': {
+                            '::-webkit-scrollbar': {
+                                width: '3px',
+                                backgroundColor: 'transparent',
+                            },
+                            '::-webkit-scrollbar-track': {
+                                backgroundColor: 'transparent',
+                            },
+                            '::-webkit-scrollbar-thumb': {
+                                backgroundColor: 'transparent',
+                            },
                             boxSizing: 'border-box',
                             width: drawerWidth,
-                            backgroundColor: 'background.default',
+                            backgroundColor: 'background.paper',
+                            backgroundImage: 'none',
+                            '&:hover::-webkit-scrollbar-thumb': {
+                                backgroundColor: 'custom.background',
+                            },
                         },
                     }}>
                     {drawer}
