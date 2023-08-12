@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 //mui component
 import {
@@ -19,15 +19,14 @@ import {
     ListItemButton,
     styled,
     Badge,
-    useTheme,
 } from '@mui/material';
 
 //mui icons
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
-import StorageIcon from '@mui/icons-material/Storage';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -35,9 +34,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NavLinks from '@/services/navLinks';
 import Search from './Search';
 import Image from './Image';
-import { useRouter } from 'next/router';
 import NavLink from './NavLink';
 import useMedia from '@/hooks/useMedia';
+import { useTheme } from '@/styles/theme';
 
 const drawerWidth = 270;
 
@@ -72,14 +71,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export default function Navbar(props) {
     const { children } = props;
-    const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const drawerOpenMedia = useMedia('900');
+    const mdLayout = useMedia('(min-width: 900px)');
+    const { toggleTheme, mode } = useTheme();
 
-    useMemo(
-        () => (drawerOpenMedia ? setDrawerOpen(true) : setDrawerOpen(false)),
-        [drawerOpenMedia]
-    );
+    useMemo(() => (mdLayout ? setDrawerOpen(true) : setDrawerOpen(false)), [mdLayout]);
     // const { showSuccess, showError } = useMessage();
 
     const handleDrawerToggle = () => {
@@ -299,8 +295,15 @@ export default function Navbar(props) {
                                 </Box>
 
                                 <Box display={{ xs: 'none', md: 'block' }}>
-                                    <IconButton disableRipple variant='navIcon'>
-                                        <WbSunnyOutlinedIcon sx={{ fontSize: 20 }} />
+                                    <IconButton
+                                        disableRipple
+                                        variant='navIcon'
+                                        onClick={toggleTheme}>
+                                        {mode === 'dark' ? (
+                                            <LightModeIcon sx={{ fontSize: 20 }} />
+                                        ) : (
+                                            <DarkModeIcon sx={{ fontSize: 20 }} />
+                                        )}
                                     </IconButton>
                                     <IconButton disableRipple variant='navIcon'>
                                         <EmailOutlinedIcon sx={{ fontSize: 20 }} />
@@ -330,7 +333,7 @@ export default function Navbar(props) {
                 aria-label='mailbox folders'>
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    variant={drawerOpenMedia ? 'persistent' : 'temporary'}
+                    variant={mdLayout ? 'persistent' : 'temporary'}
                     open={drawerOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
@@ -368,7 +371,8 @@ export default function Navbar(props) {
                     minHeight: 'calc(100vh - 115px)',
                     transition: 'all 225ms cubic-bezier(0, 0, 0.2, 1) 0ms',
                     backgroundColor: 'background.default',
-                    mt: { xs: 7, md: '115px' },
+                    mt: '85px',
+                    px: 2.8,
                 }}>
                 {children}
             </Box>

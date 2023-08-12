@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const useMedia = (value, cb) => {
+const useMedia = (query, cb) => {
     const [media, setMedia] = useState(false);
 
     useEffect(() => {
-        const matched = window.matchMedia(`(min-width: ${value}px)`);
-
+        const matched = window.matchMedia(query);
+        setMedia(matched.matches);
         matched.addEventListener('change', e => {
             setMedia(e.matches);
             if (cb) cb(e);

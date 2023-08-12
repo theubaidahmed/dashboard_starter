@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import useSnack from '@/hooks/useSnack';
 import Theme from '@/styles/theme';
+import ThemeContextProvider from '@/styles/theme';
 
 const SnackContext = createContext();
 
@@ -11,15 +12,14 @@ export default function Header({ children }) {
     const { SnackBar, showMessage } = useSnack();
 
     return (
-        <ThemeProvider theme={Theme}>
-            <CssBaseline />
+        <ThemeContextProvider>
             <SnackContext.Provider value={showMessage}>
                 {/* <AuthorizationProvider> */}
                 <Navbar>{children}</Navbar>
                 {/* </AuthorizationProvider> */}
                 {SnackBar}
             </SnackContext.Provider>
-        </ThemeProvider>
+        </ThemeContextProvider>
     );
 }
 
