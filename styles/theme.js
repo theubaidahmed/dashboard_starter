@@ -20,6 +20,7 @@ const ThemeContextProvider = props => {
             custom: {
                 background: 'rgb(45 51 57)',
                 borderColor: 'rgba(255, 255, 255, 0.07)',
+                common: 'rgba(0, 0, 0, 0.87)',
             },
         }),
         []
@@ -37,6 +38,7 @@ const ThemeContextProvider = props => {
             custom: {
                 background: 'rgb(45 51 57)',
                 borderColor: 'rgba(255, 255, 255, 0.07)',
+                common: '#FFFFFF',
             },
         }),
         []
